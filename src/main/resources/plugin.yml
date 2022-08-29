@@ -1,0 +1,5 @@
+name: 'Tombstone'
+version: '1.0.0'
+main: com.jl.main.Tombstone
+author: "Jamie"
+api-version: '1.19'
