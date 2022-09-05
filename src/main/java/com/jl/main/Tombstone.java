@@ -1,9 +1,5 @@
 package com.jl.main;
 
-import com.archyx.aureliumskills.AureliumSkills;
-import com.archyx.aureliumskills.api.AureliumAPI;
-import com.archyx.aureliumskills.modifier.Multiplier;
-import com.archyx.aureliumskills.skills.Skills;
 import org.bukkit.Location;
 
 import org.bukkit.configuration.file.FileConfiguration;
