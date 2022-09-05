@@ -21,7 +21,11 @@ public class PlayerLeaveListener implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        tasks.get(player.getUniqueId().toString()).cancel();
+        BukkitTask task = tasks.get(player.getUniqueId().toString());
+        if(task != null){
+            task.cancel();
+        }
         tasks.remove(player.getUniqueId().toString());
+
     }
 }

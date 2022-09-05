@@ -1,20 +1,16 @@
 package com.jl.main;
 
-import com.archyx.aureliumskills.AureliumSkills;
-import com.archyx.aureliumskills.api.AureliumAPI;
+import com.archyx.aureliumskills.data.PlayerData;
 import com.archyx.aureliumskills.modifier.Multiplier;
-import com.archyx.aureliumskills.modifier.Multipliers;
-import com.archyx.aureliumskills.skills.Skills;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
-import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PlayerJoinListener implements Listener {
     Tombstone tombstone;
@@ -25,23 +21,41 @@ public class PlayerJoinListener implements Listener {
         this.multipliers = multipliers;
         this.tasks = tasks;
     }
+    long ticks = 24000L;
+
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event){
-        BukkitScheduler scheduler = tombstone.getServer().getScheduler();
-        String UUID = event.getPlayer().getUniqueId().toString();
-        BukkitTask task = scheduler.runTaskTimerAsynchronously(tombstone, () -> {
-            Double mult = multipliers.get(UUID);
-            if(mult == null){
-                multipliers.put(UUID, 1.0);
-                return;
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        tombstone.getServer().getScheduler().scheduleSyncDelayedTask(tombstone, () -> {
+            if(tombstone.applyMult(event.getPlayer(), getMult(event.getPlayer()))){
+                event.getPlayer().sendMessage("Applied your multiplier: " + (1 + (getMult(event.getPlayer())/100))+"x");
             }
-            if(mult.doubleValue() == 3.0) {
-                tombstone.getAureliumPlugin().getPlayerManager().getPlayerData(event.getPlayer()).addMultiplier(new Multiplier("jl_alive_multiplier", null, mult+0.05));
-                return;
-            };
-            multipliers.put(UUID, mult+0.05);
-        }, 24000L, 24000L);
-        tasks.put(UUID, task);
+            //tombstone.getAureliumPlugin().getPlayerManager().getPlayerData(event.getPlayer()).addMultiplier(new Multiplier("jl_alive_multiplier", null, getMult(event.getPlayer())));;
+            BukkitScheduler scheduler = tombstone.getServer().getScheduler();
+            String UUID = event.getPlayer().getUniqueId().toString();
+            BukkitTask task = scheduler.runTaskTimerAsynchronously(tombstone, () -> {
+                double mult = getMult(event.getPlayer());
+                if(mult < 300.0) {
+                    mult += Tombstone.MULT_INC;
+                    multipliers.put(UUID, mult);
+                }
+
+                tombstone.applyMult(event.getPlayer(), mult);
+            }, ticks, ticks);
+            tasks.put(UUID, task);
+
+        }, 200);
+
+    }
+
+
+    private double getMult(Player player){
+        String UUID = player.getUniqueId().toString();
+        Double mult = multipliers.get(UUID);
+        if(mult == null){
+            multipliers.put(UUID, 1.0);
+            mult = 1.0;
+        }
+        return mult;
     }
 
 }

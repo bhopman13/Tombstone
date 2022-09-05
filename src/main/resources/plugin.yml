@@ -4,3 +4,13 @@ main: com.jl.main.Tombstone
 author: "Jamie"
 api-version: '1.19'
 softdepend: [AureliumSkills]
+
+commands:
+  ts:
+    description: updates the multipliers
+    usage: /<command>
+    permission: perm
+permissions:
+  perm.*:
+    description: p
+    default: true

@@ -34,16 +34,12 @@ public class DeathListener implements Listener {
         this.multipliers = multipliers;
     }
 
-    private boolean reduceSkillLevel(Player player, Skill skill, int amt){
-        PlayerData data = tombstone.getAureliumPlugin().getPlayerManager().getPlayerData(player);
-        if(data.getSkillLevel(skill) - amt < 0){
-            return false;
-        }
-        if(data.getSkillLevel(skill) >= amt){
-            data.setSkillLevel(skill, data.getSkillLevel(skill) - amt);
-        }
-        return true;
+    public DeathListener(CustomMap<Location, Inventory> inventories, Tombstone tombstone) {
+        super();
+        this.inventories = inventories;
+        this.tombstone = tombstone;
     }
+
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
@@ -58,7 +54,6 @@ public class DeathListener implements Listener {
         if(tombstone.isAureliumLoaded()) {
             multipliers.put(player.getUniqueId().toString(), 1.0);
 
-            AureliumSkills skills = tombstone.getAureliumPlugin();
             Skill s = Skills.getOrderedValues().get(new Random().nextInt(Skills.getOrderedValues().size()));
             while (s == Skills.ENDURANCE){
                 s = Skills.getOrderedValues().get(new Random().nextInt(Skills.getOrderedValues().size()));
@@ -66,14 +61,25 @@ public class DeathListener implements Listener {
             if(new Random().nextInt(100) == 69){
                 s = Skills.ENDURANCE;
             }
-
-            if(!(reduceSkillLevel(player, Skills.ENDURANCE, 1) | reduceSkillLevel(player, s, 1))){
-                player.sendMessage("Not enough XP for the chest XD");
-                return;
+            boolean endurance = reduceSkillLevel(player, Skills.ENDURANCE);
+            boolean random = reduceSkillLevel(player, s);
+            if(random){
+                player.sendMessage(s.toString() + " was chosen randomly :((");
+            }else{
+                player.sendMessage(s.toString() + " was chosen randomly but the level was already 0");
             }
-            player.sendMessage(s.toString() + " was chosen randomly :((");
-        }
+            if(endurance){
+                player.sendMessage("Endurance reduced by 1, death chest is allowed");
+            }else{
+                if(random) {
+                    player.sendMessage("Endurance was too low but " + s +" was not, death chest is allowed");
+                }else{
+                    player.sendMessage("Levels could not be taken, death chest is not allowed :(");
+                    return;
+                }
+            }
 
+        }
 
         Inventory deathInventory = Bukkit.createInventory(player, 54);
         deathInventory.setContents(dropsArr);
@@ -88,5 +94,22 @@ public class DeathListener implements Listener {
         } else {
             player.sendMessage("Error while setting up chest, your items fell like normal :(");
         }
+    }
+
+    private boolean reduceSkillLevel(Player player, Skill skill){
+        AureliumSkills plugin = tombstone.getAureliumPlugin();
+        PlayerData playerData = plugin.getPlayerManager().getPlayerData(player);
+        if (playerData == null) return false;
+        int oldLevel = playerData.getSkillLevel(skill);
+        if(oldLevel <= 1) return false;
+        playerData.setSkillLevel(skill, oldLevel - 1);
+        playerData.setSkillXp(skill, 0);
+        plugin.getLeveler().updateStats(player);
+        plugin.getLeveler().updatePermissions(player);
+        plugin.getLeveler().applyRevertCommands(player, skill, oldLevel, oldLevel - 1);
+        plugin.getLeveler().applyLevelUpCommands(player, skill, oldLevel, oldLevel - 1);
+        // Reload items and armor to check for newly met requirements
+        plugin.getModifierManager().reloadPlayer(player);
+        return true;
     }
 }
