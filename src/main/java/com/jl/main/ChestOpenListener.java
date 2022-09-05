@@ -3,6 +3,7 @@ package com.jl.main;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -31,7 +32,8 @@ public class ChestOpenListener implements Listener {
                 Inventory inv = inventories.get(blockLoc);
                 if(inv != null){
                     event.setCancelled(true);
-                    if(event.getPlayer().equals(inv.getHolder())){
+                    Player p = (Player) inv.getHolder();
+                    if(event.getPlayer().getUniqueId().equals(p.getUniqueId())){
                         event.getPlayer().openInventory(inv);
                         tombstone.saveMap();
                     }

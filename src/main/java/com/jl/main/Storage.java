@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -15,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 
 import static org.bukkit.Bukkit.getLogger;
@@ -62,7 +64,13 @@ public class Storage  {
         for(int i = 0; i < keys.size(); i++){
             customConfig.set(i+".location", keys.get(i));
             customConfig.set(i+".inventory", inventories.get(i).getContents());
-            customConfig.set(i+".holder", inventories.get(i).getHolder());
+            InventoryHolder holder = inventories.get(i).getHolder();
+            if(holder instanceof Player){
+                Player p = (Player) holder;
+                customConfig.set(i+".holder", p.getUniqueId().toString());
+            }else{
+                customConfig.set(i+".holder", inventories.get(i).getHolder());
+            }
         }
         try {
             customConfig.save(customYml);
@@ -77,7 +85,11 @@ public class Storage  {
         int i = 0;
 
         Location loc = customConfig.getLocation(i+".location");
-        InventoryHolder holder = customConfig.getObject(i+".holder", InventoryHolder.class);
+        String uuid = customConfig.getString(i+".holder");
+        if(uuid == null){
+            return inventories;
+        }
+        InventoryHolder holder = plugin.getServer().getPlayer(UUID.fromString(uuid));
         Inventory inv = getInv(holder,i+".inventory");
         while(loc != null && inv != null){
             inventories.put( loc,  inv);
@@ -104,6 +116,7 @@ public class Storage  {
                 items[i] = null;
             }
         }
+
         Inventory inv = Bukkit.createInventory(holder, 54);
         inv.setContents(items);
         return inv;

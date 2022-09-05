@@ -1,24 +1,12 @@
 package com.jl.main;
 
-import com.archyx.aureliumskills.AureliumSkills;
-import com.archyx.aureliumskills.api.AureliumAPI;
-import com.archyx.aureliumskills.modifier.Multiplier;
-import com.archyx.aureliumskills.skills.Skills;
+
 import org.bukkit.Location;
 
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
+
 import org.bukkit.inventory.Inventory;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
-import org.bukkit.scheduler.BukkitTask;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.logging.Level;
 
 
 public class Tombstone extends JavaPlugin {
