@@ -6,7 +6,7 @@ on:
     branches:
       - "master"
     tags:
-      - 'release'
+      - v*
 
 jobs:
   build_jar:
