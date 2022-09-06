@@ -47,14 +47,14 @@
         <artifactId>maven-jar-plugin</artifactId>
         <version>2.4</version>
     </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <outputDirectory>C:\Users\lenna\Desktop\Paper server\plugins</outputDirectory>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-jar-plugin</artifactId>-->
+<!--                <version>2.4</version>-->
+<!--                <configuration>-->
+<!--                    <outputDirectory>C:\Users\lenna\Desktop\Paper server\plugins</outputDirectory>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 </project>
