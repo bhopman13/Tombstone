@@ -25,6 +25,7 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        event.getPlayer().setAllowFlight(true);
         tombstone.getServer().getScheduler().scheduleSyncDelayedTask(tombstone, () -> {
             if(tombstone.applyMult(event.getPlayer(), getMult(event.getPlayer()))){
                 event.getPlayer().sendMessage("Applied your multiplier: " + (1 + (getMult(event.getPlayer())/100))+"x");
