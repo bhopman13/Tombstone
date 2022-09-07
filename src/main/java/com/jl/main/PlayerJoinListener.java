@@ -32,15 +32,6 @@ public class PlayerJoinListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         player.setAllowFlight(true);
-        if(player.getName().contains("panda")){
-            if(new Random().nextInt(5) == 3) {
-                tombstone.getServer().getScheduler().scheduleSyncDelayedTask(tombstone, () -> {
-                    player.getWorld().spawnEntity(player.getLocation(), EntityType.PANDA);
-                    player.sendMessage(ChatColor.GOLD + "PANDA!");
-                    player.playSound(player.getLocation(), Sound.BLOCK_BAMBOO_BREAK, SoundCategory.AMBIENT,100, 1);
-                }, 100L);
-            }
-        }
 
         tombstone.getServer().getScheduler().scheduleSyncDelayedTask(tombstone, () -> {
             if(tombstone.applyMult(event.getPlayer(), getMult(event.getPlayer()))){
