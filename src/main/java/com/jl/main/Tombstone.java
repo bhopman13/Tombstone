@@ -46,10 +46,12 @@ public class Tombstone extends JavaPlugin {
         loadConfig();
         this.getCommand("ts").setExecutor(new UpdateCommand(this));
         getServer().getPluginManager().registerEvents(new FlightListener(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerDamageListener(this), this);
+        getServer().getPluginManager().registerEvents(new GamemodeListener(this), this);
         getServer().getPluginManager().registerEvents(new ChestOpenListener(inventories, this), this);
         getServer().getPluginManager().registerEvents(new ChestCloseListener(inventories, this), this);
         getServer().getPluginManager().registerEvents(new ChestBreakListener(inventories, this), this);
-
+        getServer().getPluginManager().registerEvents(new PlayerSpawnListener(this), this);
         if(getServer().getPluginManager().getPlugin("AureliumSkills") != null){
             getLogger().info("Aurelium skills found");
             skills = true;
