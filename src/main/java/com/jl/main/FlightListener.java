@@ -1,6 +1,7 @@
 package com.jl.main;
 
 import com.archyx.aureliumskills.api.AureliumAPI;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,15 +20,28 @@ public class FlightListener implements Listener {
     @EventHandler
     public void playerToggleFlight(PlayerToggleFlightEvent event){
         Player player = event.getPlayer();
+
+        if(!event.getPlayer().getGameMode().equals(GameMode.SURVIVAL)){
+            return;
+        }
+
+        double manaCost = Tombstone.MANA_COST;
+        if(Tombstone.SCALABLE){
+            manaCost = AureliumAPI.getManaRegen(player) + Tombstone.MANA_COST;
+        }
+
         event.setCancelled(true);
         if(event.isFlying()) {
             tombstone.getAureliumPlugin();
+            double finalManaCost = manaCost;
             tombstone.getServer().getScheduler().runTaskAsynchronously(tombstone, () -> {
-                while (AureliumAPI.getMana(player) > 0){
-                    if(!player.isFlying()){
-                        player.setFlying(true);
-                    }
-                    double mana = AureliumAPI.getMana(player) - Tombstone.MANA_COST;
+
+                if(AureliumAPI.getMana(player) >= finalManaCost) {
+                    player.setFlying(true);
+                }
+
+                while (AureliumAPI.getMana(player) > 0 && player.isFlying()){
+                    double mana = AureliumAPI.getMana(player) - finalManaCost;
                     if(mana <= 0){
                         mana = 0;
                         AureliumAPI.setMana(player, mana);

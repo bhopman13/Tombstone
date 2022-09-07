@@ -20,6 +20,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.logging.Level;
 
@@ -33,7 +34,7 @@ public class Tombstone extends JavaPlugin {
     HashMap<String, BukkitTask> tasks;
     public static double MULT_INC = 0;
     public static double MANA_COST = 0;
-
+    public static boolean SCALABLE = true;
     @Override
     public void onEnable() {
         getDataFolder().mkdir();
@@ -41,9 +42,9 @@ public class Tombstone extends JavaPlugin {
         tasks = new HashMap<>();
         multipliers = new HashMap<>();
         CustomMap<Location, Inventory> inventories = storage.loadMap();
+        genConfig();
         loadConfig();
         this.getCommand("ts").setExecutor(new UpdateCommand(this));
-
         getServer().getPluginManager().registerEvents(new FlightListener(this), this);
         getServer().getPluginManager().registerEvents(new ChestOpenListener(inventories, this), this);
         getServer().getPluginManager().registerEvents(new ChestCloseListener(inventories, this), this);
@@ -78,8 +79,13 @@ public class Tombstone extends JavaPlugin {
             FileConfiguration config = YamlConfiguration.loadConfiguration(configYml);
             config.set("multiplier_increment", 1.0);
             config.set("mana_cost", 3.0);
+            config.set("scalable", true);
+            config.set("comment", "If scalable is true the mana cost per second of flight is mana_regen+mana_cost");
+
             config.save(configYml);
             MULT_INC = 1;
+            MANA_COST = 3;
+            SCALABLE = true;
         }catch (Exception e){
 
         }
@@ -99,10 +105,12 @@ public class Tombstone extends JavaPlugin {
             try {
                 MANA_COST = Double.parseDouble(config.getString("mana_cost"));
                 MULT_INC = Double.parseDouble(mult);
+                SCALABLE = config.getBoolean("scalable");
             }catch (Exception e){
                 getLogger().info("Couldnt load mult inc or mana cost, set to default");
                 MULT_INC = 1;
                 MANA_COST = 3;
+                SCALABLE = true;
                 genConfig();
             }
         }
