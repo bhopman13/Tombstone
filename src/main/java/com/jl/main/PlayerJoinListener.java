@@ -2,6 +2,10 @@ package com.jl.main;
 
 import com.archyx.aureliumskills.data.PlayerData;
 import com.archyx.aureliumskills.modifier.Multiplier;
+import org.bukkit.ChatColor;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -10,6 +14,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PlayerJoinListener implements Listener {
@@ -25,7 +30,18 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        event.getPlayer().setAllowFlight(true);
+        Player player = event.getPlayer();
+        player.setAllowFlight(true);
+        if(player.getName().contains("panda")){
+            if(new Random().nextInt(5) == 3) {
+                tombstone.getServer().getScheduler().scheduleSyncDelayedTask(tombstone, () -> {
+                    player.getWorld().spawnEntity(player.getLocation(), EntityType.PANDA);
+                    player.sendMessage(ChatColor.GOLD + "PANDA!");
+                    player.playSound(player.getLocation(), Sound.BLOCK_BAMBOO_BREAK, SoundCategory.AMBIENT,100, 1);
+                }, 100L);
+            }
+        }
+
         tombstone.getServer().getScheduler().scheduleSyncDelayedTask(tombstone, () -> {
             if(tombstone.applyMult(event.getPlayer(), getMult(event.getPlayer()))){
                 event.getPlayer().sendMessage("Applied your multiplier: " + (1 + (getMult(event.getPlayer())/100))+"x");

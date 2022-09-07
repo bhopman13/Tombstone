@@ -26,6 +26,7 @@ import java.util.logging.Level;
 
 public class Tombstone extends JavaPlugin {
 
+    public static long DELAY = 120L;
     private Storage storage;
     private boolean skills = false;
     private AureliumSkills skills_plugin;
@@ -83,11 +84,12 @@ public class Tombstone extends JavaPlugin {
             config.set("mana_cost", 3.0);
             config.set("scalable", true);
             config.set("comment", "If scalable is true the mana cost per second of flight is mana_regen+mana_cost");
-
+            config.set("delay", 120L);
             config.save(configYml);
             MULT_INC = 1;
             MANA_COST = 3;
             SCALABLE = true;
+            DELAY = 120L;
         }catch (Exception e){
 
         }
@@ -108,11 +110,13 @@ public class Tombstone extends JavaPlugin {
                 MANA_COST = Double.parseDouble(config.getString("mana_cost"));
                 MULT_INC = Double.parseDouble(mult);
                 SCALABLE = config.getBoolean("scalable");
+                DELAY = config.getLong("delay");
             }catch (Exception e){
                 getLogger().info("Couldnt load mult inc or mana cost, set to default");
                 MULT_INC = 1;
                 MANA_COST = 3;
                 SCALABLE = true;
+                DELAY = 120L;
                 genConfig();
             }
         }
