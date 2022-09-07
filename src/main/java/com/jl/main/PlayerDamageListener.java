@@ -18,12 +18,8 @@ public class PlayerDamageListener implements Listener {
     public void playerDamageEvent(EntityDamageEvent event){
         if(event.getEntity() instanceof Player){
             Player player = (Player) event.getEntity();
-            player.sendMessage(player.isFlying()+"f");
-            player.sendMessage(player.getAllowFlight()+"af");
             if(event.getCause().equals(EntityDamageEvent.DamageCause.FALL)){
-                if(player.getAllowFlight()){
-                    event.setCancelled(false);
-                }
+
             }
         }
 
